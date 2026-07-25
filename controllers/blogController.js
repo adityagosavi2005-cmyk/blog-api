@@ -1,5 +1,6 @@
 const Blog = require("../models/Blog");
 const { validationResult } = require("express-validator");
+const redisClient = require("../config/redis");
 
 const createBlog = async (req, res) => {
     try {
@@ -65,6 +66,26 @@ const getAllBlogs = async (req, res) => {
 
         const skip = (page - 1) * limit;
 
+        // Create unique cache key
+        const cacheKey = `blogs:page:${page}:limit:${limit}`;
+
+        // Check Redis first
+        const cachedBlogs = await redisClient.get(cacheKey);
+
+        if (cachedBlogs) {
+
+            console.log("Cache Hit");
+
+            const responseData = JSON.parse(cachedBlogs);
+
+            responseData.source = "Redis";
+
+            return res.status(200).json(responseData);
+
+        }
+
+        console.log("Cache Miss");
+
         const totalBlogs = await Blog.countDocuments();
 
         const totalPages = Math.ceil(totalBlogs / limit);
@@ -77,14 +98,31 @@ const getAllBlogs = async (req, res) => {
             .skip(skip)
             .limit(limit);
 
-        return res.status(200).json({
+        const responseData = {
+
             success: true,
+
             currentPage: page,
+
             totalPages,
+
             totalBlogs,
+
             count: blogs.length,
+
             data: blogs
-        });
+
+        };
+
+        // Save complete response in Redis
+        await redisClient.set(
+            cacheKey,
+            JSON.stringify(responseData)
+        );
+
+        responseData.source = "MongoDB";
+
+        return res.status(200).json(responseData);
 
     } catch (error) {
 

@@ -13,6 +13,7 @@ A production-style RESTful Blog API built using **Node.js**, **Express.js**, and
 - ❤️ Like / Unlike Blogs
 - 🔍 Search Blogs
 - 📄 Pagination
+- ⚡ Redis Caching (GET Blogs)
 - ✅ Request Validation using express-validator
 - 🏗️ Modular Project Structure
 
@@ -23,6 +24,7 @@ A production-style RESTful Blog API built using **Node.js**, **Express.js**, and
 - Node.js
 - Express.js
 - MongoDB
+- Redis
 - Mongoose
 - JWT (JSON Web Token)
 - bcrypt
@@ -84,6 +86,10 @@ blog-api/
 ### ❤️ Likes
 - Like Blog
 - Unlike Blog
+
+### ⚡ Caching
+
+- Redis cache for paginated blog listing
 
 ---
 
@@ -164,7 +170,8 @@ node server.js
 ## 🚀 Future Improvements
 
 - Cloudinary Image Upload
-- Redis Caching
+- Cache Invalidation
+- Cache Expiration (TTL)
 - MongoDB Transactions
 - Role-Based Authorization
 - Swagger API Documentation
