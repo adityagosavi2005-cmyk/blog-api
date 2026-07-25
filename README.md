@@ -13,7 +13,8 @@ A production-style RESTful Blog API built using **Node.js**, **Express.js**, and
 - ❤️ Like / Unlike Blogs
 - 🔍 Search Blogs
 - 📄 Pagination
-- ⚡ Redis Caching (GET Blogs)
+- ⚡ Redis Caching (Cache Hit / Cache Miss)
+- 🔄 Automatic Cache Invalidation
 - ✅ Request Validation using express-validator
 - 🏗️ Modular Project Structure
 
@@ -87,11 +88,16 @@ blog-api/
 - Like Blog
 - Unlike Blog
 
-### ⚡ Caching
+## ⚡ Redis Caching
 
-- Redis cache for paginated blog listing
+The Blog API uses Redis to improve the performance of the **Get All Blogs** endpoint.
 
----
+### Caching Strategy
+
+- Cache Hit – Responses are served directly from Redis.
+- Cache Miss – Data is fetched from MongoDB, cached in Redis, and returned.
+- Automatic Cache Invalidation – Blog-related cache is cleared whenever a blog is created, updated, or deleted.
+- Cache Expiration (TTL) – Cached responses automatically expire after 5 minutes to prevent stale data.
 
 ## ⚙️ Installation
 
@@ -167,11 +173,15 @@ node server.js
 
 ---
 
+### ⚡ Redis Cache Miss
+
+First request fetches data from MongoDB and stores it in Redis.
+
+![Redis Cache Miss](assets/redis-cache-miss.png)
+
 ## 🚀 Future Improvements
 
 - Cloudinary Image Upload
-- Cache Invalidation
-- Cache Expiration (TTL)
 - MongoDB Transactions
 - Role-Based Authorization
 - Swagger API Documentation

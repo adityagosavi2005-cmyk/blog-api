@@ -34,6 +34,14 @@ const createBlog = async (req, res) => {
 
         });
 
+        const keys = await redisClient.keys("blogs:*");
+
+        if (keys.length > 0) {
+            await redisClient.del(keys);
+
+            console.log("Blog cache invalidated");
+        }
+
         return res.status(201).json({
             success: true,
             message: "Blog created successfully",
@@ -117,7 +125,10 @@ const getAllBlogs = async (req, res) => {
         // Save complete response in Redis
         await redisClient.set(
             cacheKey,
-            JSON.stringify(responseData)
+            JSON.stringify(responseData),
+            {
+                EX: 300
+            }
         );
 
         responseData.source = "MongoDB";
@@ -229,6 +240,14 @@ const updateBlog = async (req, res) => {
             }
         );
 
+        const keys = await redisClient.keys("blogs:*");
+
+        if (keys.length > 0) {
+            await redisClient.del(keys);
+
+            console.log("Blog cache invalidated");
+        }
+
         return res.status(200).json({
             success: true,
             message: "Blog updated successfully",
@@ -280,6 +299,14 @@ const deleteBlog = async (req, res) => {
         }
 
         await blog.deleteOne();
+
+        const keys = await redisClient.keys("blogs:*");
+
+        if (keys.length > 0) {
+            await redisClient.del(keys);
+
+            console.log("Blog cache invalidated");
+        }
 
         return res.status(200).json({
             success: true,
