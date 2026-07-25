@@ -179,6 +179,12 @@ First request fetches data from MongoDB and stores it in Redis.
 
 ![Redis Cache Miss](assets/redis-cache-miss.png)
 
+### ⚡ Redis Cache Hit
+
+Subsequent requests are served directly from Redis without querying MongoDB.
+
+![Redis Cache Hit](assets/redis-cache-hit.png)
+
 ## 🚀 Future Improvements
 
 - Cloudinary Image Upload
